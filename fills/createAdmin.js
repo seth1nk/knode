@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs');
 const User = require('../models/User');
 
 // Подключение к PostgreSQL (Clever Cloud)
-const sequelize = new Sequelize('postgresql://ul1e6bvbtulgghqikapt:HBmabTXjQKj9cuvnVQJJMMGcnDfwqf@bok8olbwcb3wgp8da8ze-postgresql.services.clever-cloud.com:50013/bok8olbwcb3wgp8da8ze', {
+const sequelize = new Sequelize('postgresql://unwizau3i3bc3qftkf9u:nbkHOWX0RgNJysjxUV8zSOzngiA41d@bakxhg5dqczxkalyyqbw-postgresql.services.clever-cloud.com:50013/bakxhg5dqczxkalyyqbw', {
     dialect: 'postgres',
     logging: console.log,
     dialectOptions: {

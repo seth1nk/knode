@@ -2,7 +2,7 @@ const { Sequelize, DataTypes } = require('sequelize');
 const { faker } = require('@faker-js/faker/locale/ru');
 const path = require('path');
 const fs = require('fs');
-const sequelize = new Sequelize('postgresql://ul1e6bvbtulgghqikapt:HBmabTXjQKj9cuvnVQJJMMGcnDfwqf@bok8olbwcb3wgp8da8ze-postgresql.services.clever-cloud.com:50013/bok8olbwcb3wgp8da8ze', {
+const sequelize = new Sequelize('postgresql://unwizau3i3bc3qftkf9u:nbkHOWX0RgNJysjxUV8zSOzngiA41d@bakxhg5dqczxkalyyqbw-postgresql.services.clever-cloud.com:50013/bakxhg5dqczxkalyyqbw', {
     dialect: 'postgres',
     logging: false,
     dialectOptions: {
@@ -13,7 +13,7 @@ const sequelize = new Sequelize('postgresql://ul1e6bvbtulgghqikapt:HBmabTXjQKj9c
     },
 });
 const Client = require('../models/Client')(sequelize, DataTypes);
-const sampleImages = ['t1.jpg', 't2.jpg', 't3.jpg', 't4.jpg', 't5.jpg', 't6.jpg'];
+const sampleImages = ['c1.jpg', 'c2.png', 'c3.jpg', 'c5.jpg', 'c6.jpg'];
 
 async function fillClientsTable(count) {
     try {
@@ -22,11 +22,12 @@ async function fillClientsTable(count) {
             const client = await Client.create({
                 first_name: faker.person.firstName(),
                 last_name: faker.person.lastName(),
-                phone: faker.phone.number(),
+                middle_name: faker.person.middleName(),
                 email: faker.internet.email(),
+                phone: faker.phone.number(),
                 address: faker.location.streetAddress(),
-                birth_date: faker.date.birthdate({ min: 18, max: 80, mode: 'age' }),
-                notes: faker.lorem.sentence(),
+                birth_date: faker.date.past({ years: 60 }),
+                subscribed: faker.datatype.boolean(),
                 photo: null
             });
 
@@ -39,11 +40,11 @@ async function fillClientsTable(count) {
                 await client.update({ photo: `/images/clients/${sampleImage}` });
             }
 
-            console.log(`Запись #${i + 1} успешно создана.`);
+            console.log(`Клиент #${i + 1} успешно создан.`);
         }
-        console.log(`${count} записей успешно создано.`);
+        console.log(`${count} клиентов успешно создано.`);
     } catch (err) {
-        console.error('Ошибка при создании записи:', err);
+        console.error('Ошибка при создании клиента:', err);
     } finally {
         await sequelize.close();
     }

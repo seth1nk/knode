@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Просмотр товара</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div id="content">
+        <div class="app-container">
+            <h1 class="page-title">Просмотр товара</h1>
+            <div class="container">
+                <div class="product-info">
+                    <div class="product-image-container" id="product-image"></div>
+                    <div class="info-container">
+                        <p><strong>Название:</strong> <span id="name"></span></p>
+                        <p><strong>Производитель:</strong> <span id="manufacturer"></span></p>
+                        <p><strong>Категория:</strong> <span id="category"></span></p>
+                        <p><strong>Цена:</strong> <span id="price"></span></p>
+                        <p><strong>Количество на складе:</strong> <span id="stock_quantity"></span></p>
+                        <p><strong>Срок годности:</strong> <span id="expiration_date"></span></p>
+                        <p><strong>Требуется рецепт:</strong> <span id="prescription_required"></span></p>
+                    </div>
+                </div>
+                <div class="action-buttons">
+                    <a href="/products/index.html" class="btn-secondary">Вернуться к списку</a>
+                    <a id="edit-link" class="btn-primary">Редактировать</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/js/layout.js"></script>
+    <script src="/js/header.js"></script>
+    <script>
+        async function loadProductData() {
+            try {
+                const urlParams = new URLSearchParams(window.location.search);
+                const productId = urlParams.get('id');
+                if (!productId) {
+                    throw new Error('ID товара не указан');
+                }
+                const response = await fetch(`/api/view-product/${productId}`);
+                if (!response.ok) {
+                    throw new Error(`Ошибка сервера: ${response.status} ${response.statusText}`);
+                }
+                const product = await response.json();
+                document.getElementById('product-image').innerHTML = product.image ? `<img class="product-image" src="${product.image.replace('/img/', '/images/')}" alt="Product Image">` : 'Нет изображения';
+                document.getElementById('name').textContent = product.name || 'N/A';
+                document.getElementById('manufacturer').textContent = product.manufacturer || 'N/A';
+                document.getElementById('category').textContent = product.category || 'N/A';
+                document.getElementById('price').textContent = product.price || 'N/A';
+                document.getElementById('stock_quantity').textContent = product.stock_quantity || 'N/A';
+                document.getElementById('expiration_date').textContent = product.expiration_date || 'N/A';
+                document.getElementById('prescription_required').textContent = product.prescription_required ? 'Да' : 'Нет';
+                document.getElementById('edit-link').href = `/products/edit.html?id=${product.id}`;
+            } catch (error) {
+                console.error('Ошибка загрузки данных:', error);
+                document.getElementById('content').innerHTML = `<p>Ошибка загрузки данных: ${error.message}</p>`;
+            }
+        }
+        window.onload = loadProductData;
+    </script>
+</body>
+</html>

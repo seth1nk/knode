@@ -32,7 +32,7 @@ router.get('/api/clients', authRequired, async (req, res) => {
             limit,
             offset,
             order: [['id', 'ASC']],
-            attributes: ['id', 'first_name', 'last_name', 'phone', 'email', 'address', 'birth_date', 'notes', 'photo'],
+            attributes: ['id', 'first_name', 'last_name', 'middle_name', 'email', 'phone', 'address', 'birth_date', 'subscribed', 'photo'],
         });
 
         const totalPages = Math.ceil(count / limit);
@@ -41,11 +41,12 @@ router.get('/api/clients', authRequired, async (req, res) => {
             id: item.id,
             first_name: item.first_name,
             last_name: item.last_name,
-            phone: item.phone,
+            middle_name: item.middle_name,
             email: item.email,
+            phone: item.phone,
             address: item.address,
             birth_date: item.birth_date,
-            notes: item.notes,
+            subscribed: item.subscribed,
             photo: item.photo ? item.photo.replace('/img/', '/images/') : null,
         }));
 
@@ -64,7 +65,7 @@ router.get('/api/clients', authRequired, async (req, res) => {
 router.get('/api/view-client/:id', authRequired, async (req, res) => {
     try {
         const client = await Client.findByPk(req.params.id, {
-            attributes: ['id', 'first_name', 'last_name', 'phone', 'email', 'address', 'birth_date', 'notes', 'photo'],
+            attributes: ['id', 'first_name', 'last_name', 'middle_name', 'email', 'phone', 'address', 'birth_date', 'subscribed', 'photo'],
         });
         if (!client) {
             return res.status(404).json({ error: 'Клиент не найден' });
@@ -73,11 +74,12 @@ router.get('/api/view-client/:id', authRequired, async (req, res) => {
             id: client.id,
             first_name: client.first_name,
             last_name: client.last_name,
-            phone: client.phone,
+            middle_name: client.middle_name,
             email: client.email,
+            phone: client.phone,
             address: client.address,
             birth_date: client.birth_date,
-            notes: client.notes,
+            subscribed: client.subscribed,
             photo: client.photo ? client.photo.replace('/img/', '/images/') : null,
         };
         res.json(formattedClient);
@@ -89,26 +91,28 @@ router.get('/api/view-client/:id', authRequired, async (req, res) => {
 
 router.post('/api/clients', authRequired, async (req, res) => {
     try {
-        const { first_name, last_name, phone, email, address, birth_date, notes, photo } = req.body;
+        const { first_name, last_name, middle_name, email, phone, address, birth_date, subscribed, photo } = req.body;
         const client = await Client.create({
             first_name,
             last_name,
-            phone,
+            middle_name,
             email,
+            phone,
             address,
             birth_date,
-            notes,
+            subscribed,
             photo: photo ? photo.replace('/img/', '/images/') : null,
         });
         const formattedClient = {
             id: client.id,
             first_name: client.first_name,
             last_name: client.last_name,
-            phone: client.phone,
+            middle_name: client.middle_name,
             email: client.email,
+            phone: client.phone,
             address: client.address,
             birth_date: client.birth_date,
-            notes: client.notes,
+            subscribed: client.subscribed,
             photo: client.photo,
         };
         res.status(201).json(formattedClient);
@@ -121,22 +125,23 @@ router.post('/api/clients', authRequired, async (req, res) => {
 router.post('/add-client', authRequired, upload.single('photo'), async (req, res) => {
     let client;
     try {
-        const requiredFields = ['first_name', 'last_name', 'phone'];
+        const requiredFields = ['first_name', 'last_name', 'email'];
         for (const field of requiredFields) {
             if (!req.body[field]) {
                 throw new Error(`Отсутствует обязательное поле: ${field}`);
             }
         }
 
-        const { first_name, last_name, phone, email, address, birth_date, notes } = req.body;
+        const { first_name, last_name, middle_name, email, phone, address, birth_date, subscribed } = req.body;
         client = await Client.create({
             first_name: first_name.trim(),
             last_name: last_name.trim(),
-            phone: phone.trim(),
-            email: email ? email.trim() : null,
+            middle_name: middle_name ? middle_name.trim() : null,
+            email: email.trim(),
+            phone: phone ? phone.trim() : null,
             address: address ? address.trim() : null,
             birth_date: birth_date || null,
-            notes: notes ? notes.trim() : null,
+            subscribed: subscribed === 'true',
             photo: null
         });
 
@@ -164,26 +169,28 @@ router.put('/api/clients/:id', authRequired, async (req, res) => {
         if (!client) {
             return res.status(404).json({ error: 'Клиент не найден' });
         }
-        const { first_name, last_name, phone, email, address, birth_date, notes, photo } = req.body;
+        const { first_name, last_name, middle_name, email, phone, address, birth_date, subscribed, photo } = req.body;
         await client.update({
             first_name,
             last_name,
-            phone,
+            middle_name,
             email,
+            phone,
             address,
             birth_date,
-            notes,
+            subscribed,
             photo: photo ? photo.replace('/img/', '/images/') : null,
         });
         const formattedClient = {
             id: client.id,
             first_name: client.first_name,
             last_name: client.last_name,
-            phone: client.phone,
+            middle_name: client.middle_name,
             email: client.email,
+            phone: client.phone,
             address: client.address,
             birth_date: client.birth_date,
-            notes: client.notes,
+            subscribed: client.subscribed,
             photo: client.photo,
         };
         res.json(formattedClient);
@@ -199,7 +206,7 @@ router.post('/edit-client/:id', authRequired, upload.single('photo'), async (req
         if (!client) {
             return res.status(404).send('Клиент не найден');
         }
-        const { first_name, last_name, phone, email, address, birth_date, notes } = req.body;
+        const { first_name, last_name, middle_name, email, phone, address, birth_date, subscribed } = req.body;
         let photoPath = client.photo;
         if (req.file) {
             const newFilePath = path.join(__dirname, '../images', 'clients', req.file.originalname);
@@ -211,11 +218,12 @@ router.post('/edit-client/:id', authRequired, upload.single('photo'), async (req
         await client.update({
             first_name: first_name.trim(),
             last_name: last_name.trim(),
-            phone: phone.trim(),
-            email: email ? email.trim() : null,
+            middle_name: middle_name ? middle_name.trim() : null,
+            email: email.trim(),
+            phone: phone ? phone.trim() : null,
             address: address ? address.trim() : null,
             birth_date: birth_date || null,
-            notes: notes ? notes.trim() : null,
+            subscribed: subscribed === 'true',
             photo: photoPath,
         });
         res.redirect('/clients/index.html');

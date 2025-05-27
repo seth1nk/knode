@@ -21,11 +21,12 @@
                             <th>ID</th>
                             <th>Имя</th>
                             <th>Фамилия</th>
-                            <th>Телефон</th>
+                            <th>Отчество</th>
                             <th>Email</th>
+                            <th>Телефон</th>
                             <th>Адрес</th>
                             <th>Дата рождения</th>
-                            <th>Заметки</th>
+                            <th>Подписан</th>
                             <th>Фото</th>
                             <th>Действия</th>
                         </tr>
@@ -56,7 +57,7 @@
                 const tbody = document.getElementById('clients-table-body');
                 tbody.innerHTML = '';
                 if (clients.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="10" class="no-data">Нет клиентов</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="11" class="no-data">Нет клиентов</td></tr>';
                 } else {
                     clients.forEach((item, index) => {
                         const row = `
@@ -64,11 +65,12 @@
                                 <td>${index + 1 + (currentPage - 1) * 10}</td>
                                 <td>${item.first_name || 'N/A'}</td>
                                 <td>${item.last_name || 'N/A'}</td>
-                                <td>${item.phone || 'N/A'}</td>
+                                <td>${item.middle_name || 'N/A'}</td>
                                 <td>${item.email || 'N/A'}</td>
+                                <td>${item.phone || 'N/A'}</td>
                                 <td>${item.address || 'N/A'}</td>
                                 <td>${item.birth_date || 'N/A'}</td>
-                                <td>${item.notes || 'N/A'}</td>
+                                <td>${item.subscribed ? 'Да' : 'Нет'}</td>
                                 <td>${item.photo ? `<img class="product-image" src="${item.photo.replace('/img/', '/images/')}" alt="Client Photo">` : 'N/A'}</td>
                                 <td>
                                     <div class="action-buttons">
@@ -110,7 +112,7 @@
             } catch (error) {
                 console.error('Ошибка загрузки клиентов:', error);
                 const tbody = document.getElementById('clients-table-body');
-                tbody.innerHTML = '<tr><td colspan="10">Ошибка загрузки данных: ' + error.message + '</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="11">Ошибка загрузки данных: ' + error.message + '</td></tr>';
             }
         }
         window.onload = () => loadClients();

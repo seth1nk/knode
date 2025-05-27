@@ -21,12 +21,16 @@
                     <input id="last_name" class="form-input" type="text" name="last_name" required>
                 </div>
                 <div class="input-group">
-                    <label for="phone">Телефон:</label>
-                    <input id="phone" class="form-input" type="text" name="phone" required>
+                    <label for="middle_name">Отчество:</label>
+                    <input id="middle_name" class="form-input" type="text" name="middle_name">
                 </div>
                 <div class="input-group">
                     <label for="email">Email:</label>
-                    <input id="email" class="form-input" type="email" name="email">
+                    <input id="email" class="form-input" type="email" name="email" required>
+                </div>
+                <div class="input-group">
+                    <label for="phone">Телефон:</label>
+                    <input id="phone" class="form-input" type="text" name="phone">
                 </div>
                 <div class="input-group">
                     <label for="address">Адрес:</label>
@@ -37,11 +41,11 @@
                     <input id="birth_date" class="form-input" type="date" name="birth_date">
                 </div>
                 <div class="input-group">
-                    <label for="notes">Заметки:</label>
-                    <textarea id="notes" class="form-input" name="notes"></textarea>
+                    <label for="subscribed">Подписан на рассылку:</label>
+                    <input id="subscribed" class="form-input" type="checkbox" name="subscribed">
                 </div>
                 <div class="input-group">
-                    <label for="photo">Фото:</label>
+                    <label for="photo">Фото клиента:</label>
                     <input id="photo" class="form-input" type="file" name="photo" accept="image/*">
                 </div>
                 <div class="action-buttons">
@@ -69,11 +73,12 @@
                 const client = await response.json();
                 document.getElementById('first_name').value = client.first_name || '';
                 document.getElementById('last_name').value = client.last_name || '';
-                document.getElementById('phone').value = client.phone || '';
+                document.getElementById('middle_name').value = client.middle_name || '';
                 document.getElementById('email').value = client.email || '';
+                document.getElementById('phone').value = client.phone || '';
                 document.getElementById('address').value = client.address || '';
                 document.getElementById('birth_date').value = client.birth_date || '';
-                document.getElementById('notes').value = client.notes || '';
+                document.getElementById('subscribed').checked = client.subscribed || false;
             } catch (error) {
                 console.error('Ошибка загрузки данных:', error);
                 document.getElementById('content').innerHTML = `<p>Ошибка загрузки данных: ${error.message}</p>`;

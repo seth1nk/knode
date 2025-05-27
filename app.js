@@ -5,13 +5,13 @@ const logger = require('morgan');
 const cors = require('cors');
 const { Sequelize } = require('sequelize');
 const authRouter = require('./routes/auth');
-const clientsRouter = require('./routes/clients');
-const repairsRouter = require('./routes/repairs');
+const clientsRouter = require('./routes/client');
+const productsRouter = require('./routes/product');
 const authRequired = require('./middleware/authRequired');
 
 const app = express();
 
-const sequelize = new Sequelize('postgresql://ul1e6bvbtulgghqikapt:HBmabTXjQKj9cuvnVQJJMMGcnDfwqf@bok8olbwcb3wgp8da8ze-postgresql.services.clever-cloud.com:50013/bok8olbwcb3wgp8da8ze', {
+const sequelize = new Sequelize('postgresql://unwizau3i3bc3qftkf9u:nbkHOWX0RgNJysjxUV8zSOzngiA41d@bakxhg5dqczxkalyyqbw-postgresql.services.clever-cloud.com:50013/bakxhg5dqczxkalyyqbw', {
     dialect: 'postgres',
     logging: console.log,
     dialectOptions: {
@@ -22,7 +22,7 @@ const sequelize = new Sequelize('postgresql://ul1e6bvbtulgghqikapt:HBmabTXjQKj9c
     },
 });
 
-const { User, Client, Repair } = require('./models');
+const { User, Client, Product } = require('./models');
 
 sequelize.sync({ alter: true })
     .then(() => console.log('Models synchronized with database'))
@@ -39,12 +39,12 @@ app.use(cors({
 app.use('/css', express.static(path.join(__dirname, 'css')));
 app.use('/images', express.static(path.join(__dirname, 'images')));
 app.use('/clients', express.static(path.join(__dirname, 'views', 'clients')));
-app.use('/repairs', express.static(path.join(__dirname, 'views', 'repairs')));
+app.use('/products', express.static(path.join(__dirname, 'views', 'products')));
 app.use('/js', express.static(path.join(__dirname, 'js')));
 
 app.use('/auth', authRouter);
 app.use('/', clientsRouter);
-app.use('/', repairsRouter);
+app.use('/', productsRouter);
 
 app.get('/', authRequired, (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'index.html'));
